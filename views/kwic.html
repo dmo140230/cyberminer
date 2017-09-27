@@ -1,0 +1,46 @@
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<style>
+    textarea {
+        width: 100%;
+        height: 25%;
+    }
+</style>
+<h4>KWIC Index System</h4>
+<form>
+    Line Input:<br>
+    <textarea name="lines" id="lines" cols="50" rows="10" placeholder="Please enter the lines you wish to index here.">{{input}}</textarea>
+    <br><br>
+    Circular Shift Output:<br>
+    <textarea name="circular" id="circular" cols="50" rows="10" disabled>{{circular}}</textarea>
+    <br><br>
+    Alphabetization Output:<br>
+    <textarea name="alpha" id="alpha" cols="50" rows="10" disabled>{{alpha}}</textarea>
+    <br><br>
+    <!-- <input onclick="index()"type="button" value="Submit"> -->
+</form>
+<script>
+    $('#lines').on( "keyup", function(e) {
+        clearTimeout($.data(this, 'timer'));
+        if (e.keyCode == 13)
+            index();
+        else
+        $(this).data('timer', setTimeout(index, 500));
+    });
+
+    function index(){
+        var data = {};
+        data.lines = $('#lines').val();
+        $.ajax({
+            url: "/index",
+            type: 'POST',
+            data: data,
+            success: function(res) {
+                //console.log(res);
+                $('#circular').val(res.circular);
+                $('#alpha').val(res.alpha);
+            }
+        });
+    }
+</script>
