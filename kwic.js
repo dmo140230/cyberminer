@@ -1,7 +1,7 @@
 //Load Express Framework
 var express = require('express');
-var circular = require('./modules/circular')
-var alpha = require('./modules/alpha')
+var Circular = require('./modules/circular')
+var Alpha = require('./modules/alpha')
 //Load Mustache Template Engine
 var mustachex = require('mustachex');
 
@@ -34,12 +34,15 @@ app.post('/index', function(req, res) {
     var err_msg = '';
     console.log(req.body);
     console.log(req.body.lines);
-    var lines = req.body.lines;
-    circular.ciruclarShift(lines, function(circular){
-        if(circular){
-            alpha.alphabetize(circular, function(alpha){
-                if(alpha){
-                    var circular_lines = circular.join('\n')
+    //var lines = req.body.lines;
+    var circular = new Circular(req.body.lines);
+    circular.ciruclarShift(function(){
+        var c = circular.getShiftedLines();
+        if(c.length > 0){
+            var alpha = new Alpha(c).getAlphaLines();
+            //alpha.alphabetize(c, function(alpha){
+                if(alpha.length > 0){
+                    var circular_lines = c.join('\n')
                     var alpha_lines = alpha.join('\n')
                     console.log(circular_lines);
                     console.log(alpha_lines)
@@ -62,7 +65,7 @@ app.post('/index', function(req, res) {
                         error: err_msg
                     })
                 }
-            });
+            //});
         }
         else{
             err_msg = 'An error occured during the circular shift'

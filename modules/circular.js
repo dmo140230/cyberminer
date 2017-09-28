@@ -1,11 +1,15 @@
 'use strict'
 var async = require('async');
 
-exports.ciruclarShift = function(lines, call){
-    //console.log(lines);
-    var split_lines = lines.split("\n");
-    var circ_lines = [];
-    async.forEach(split_lines, function (line, each_callback){ 
+function Circular(lines) {
+    this.split_lines = lines.split("\n");
+    this.circ_lines = [];
+}
+
+Circular.prototype.ciruclarShift = function(call){
+    var result = [];
+    var that = this;
+    async.forEach(this.split_lines, function (line, each_callback){ 
         try {
             var line = line.replace(/[\n\r]/g, '')
             var shifts = [];
@@ -17,25 +21,28 @@ exports.ciruclarShift = function(lines, call){
                 shifts.push(words.join(' '))
                 var current = words.shift();
             }while(current != first);
-            /* console.log("The shifts are: ")
-            console.log(shifts); */
-            circ_lines = circ_lines.concat(shifts);
+            result = result.concat(shifts);
             each_callback();
         } catch (error) {
+            console.log(error);
             each_callback(error);
         }
     }, function(err) {
         if(err){
             console.log("An error occured during the circular shift");
             console.log(err);
-            call(null);
+            call();
         }
         else{
-            /* console.log("The circular shifted lines are: ")
-            console.log(circ_lines);
-            console.log(circ_lines.length) */
-            call(circ_lines);
+            that.circ_lines = result;
+            call();
         }
     }); 
     
 }
+
+Circular.prototype.getShiftedLines = function(){
+    return this.circ_lines;
+}
+
+module.exports = Circular;

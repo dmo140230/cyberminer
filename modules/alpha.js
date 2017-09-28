@@ -1,9 +1,16 @@
 'use strict'
 
-exports.alphabetize = function(circ_lines, callback){
+function Alpha(circ_lines) {
+    this.alpha_lines = mergeSort(circ_lines.slice());
+}
+
+Alpha.prototype.getAlphaLines = function(){
+  return this.alpha_lines;
+}
+/* exports.alphabetize = function(circ_lines, callback){
     var alpha_lines = mergeSort(circ_lines.slice());
     callback(alpha_lines)
-}
+} */
 
 
 var mergeSort = function(array) {
@@ -45,3 +52,4 @@ var mergeSort = function(array) {
     return merge_sort(array);
   }
   
+  module.exports = Alpha;
