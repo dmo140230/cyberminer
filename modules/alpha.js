@@ -7,11 +7,6 @@ function Alpha(circ_lines) {
 Alpha.prototype.getAlphaLines = function(){
   return this.alpha_lines;
 }
-/* exports.alphabetize = function(circ_lines, callback){
-    var alpha_lines = mergeSort(circ_lines.slice());
-    callback(alpha_lines)
-} */
-
 
 var mergeSort = function(array) {
     function merge(arr, aux, lo, mid, hi) {

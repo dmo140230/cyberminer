@@ -1,13 +1,13 @@
-//Load Express Framework
+//Load Express Framework and necessary modules
 var express = require('express');
-var Circular = require('./modules/circular')
-var Alpha = require('./modules/alpha')
-//Load Mustache Template Engine
+//Load the Mustache Template Engine
 var mustachex = require('mustachex');
+var Alpha = require('./modules/alpha')
+var Circular = require('./modules/circular')
 
-//Call express
+//Create an express app
 var app = express();
-
+//use a json body parser
 var bodyParser = require('body-parser');
 
 //Set Global App Settings
@@ -31,51 +31,30 @@ app.get('/', function(req, res) {
   });
 
 app.post('/index', function(req, res) {
-    var err_msg = '';
     console.log(req.body);
     console.log(req.body.lines);
-    //var lines = req.body.lines;
     var circular = new Circular(req.body.lines);
-    circular.ciruclarShift(function(){
-        var c = circular.getShiftedLines();
-        if(c.length > 0){
-            var alpha = new Alpha(c).getAlphaLines();
-            //alpha.alphabetize(c, function(alpha){
-                if(alpha.length > 0){
-                    var circular_lines = c.join('\n')
-                    var alpha_lines = alpha.join('\n')
-                    console.log(circular_lines);
-                    console.log(alpha_lines)
-                    console.log("FINISHED");
-                    res.json(
-                        {
-                            input: req.body.lines,
-                            circular: circular_lines,
-                            alpha: alpha_lines,
-                            error: err_msg
-                        }
-                    );
-                }
-                else{
-                    err_msg = 'An error occured during the alphabetization'
-                    res.json(
-                    {
-                        circular: '',
-                        alpha: '',
-                        error: err_msg
-                    })
-                }
-            //});
-        }
-        else{
-            err_msg = 'An error occured during the circular shift'
+    circular.ciruclarShift(function(err, result){
+        if(err){
             res.json(
             {
                 circular: '',
                 alpha: '',
-                error: err_msg
-            }
-        );
+                error: err
+            });
+        }
+        else{
+            console.log(result.circular_lines);
+            console.log(result.alpha_lines)
+            console.log("FINISHED");
+            res.json(
+                {
+                    input: req.body.lines,
+                    circular: result.circular_lines.join('\n'),
+                    alpha: result.alpha_lines.join('\n'),
+                    error: ''
+                }
+            );
         }
     });
 });

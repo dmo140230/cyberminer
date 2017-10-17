@@ -1,9 +1,11 @@
 'use strict'
 var async = require('async');
+var Alpha = require('./alpha')
 
 function Circular(lines) {
     this.split_lines = lines.split("\n");
     this.circ_lines = [];
+    this.alpha_lines = [];
 }
 
 Circular.prototype.ciruclarShift = function(call){
@@ -31,11 +33,25 @@ Circular.prototype.ciruclarShift = function(call){
         if(err){
             console.log("An error occured during the circular shift");
             console.log(err);
-            call();
+            call(err);
         }
         else{
             that.circ_lines = result;
-            call();
+            if(result.length > 0){
+                that.alpha_lines = new Alpha(result).getAlphaLines();
+                if(that.alpha_lines.length > 0){
+                    call(null, {
+                        circular_lines: that.circ_lines,
+                        alpha_lines : that.alpha_lines
+                    });
+                }
+                else{
+                    call("Alphabetization produced no lines");                    
+                }
+            }
+            else{
+                call("Circular shift produced no lines");
+            }
         }
     }); 
     

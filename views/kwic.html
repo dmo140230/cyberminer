@@ -5,17 +5,29 @@
     textarea {
         width: 100%;
         height: 25%;
+        border: 3px solid #cccccc;
+        padding: 5px;
+        font-family: Tahoma, sans-serif;
+        background-position: bottom right;
+        background-repeat: no-repeat;
+    }
+    div, h4{
+        font-family: Tahoma, sans-serif;
+    }
+    textarea[disabled] {
+        color: #111314;
+        background-color: #acc0d1;
     }
 </style>
 <h4>KWIC Index System</h4>
 <form>
-    Line Input:<br>
+    <div>Line Input:</div><br>
     <textarea name="lines" id="lines" cols="50" rows="10" placeholder="Please enter the lines you wish to index here.">{{input}}</textarea>
     <br><br>
-    Circular Shift Output:<br>
+    <div>Circular Shift Output:</div><br>
     <textarea name="circular" id="circular" cols="50" rows="10" disabled>{{circular}}</textarea>
     <br><br>
-    Alphabetization Output:<br>
+    <div>Alphabetization Output:</div><br>
     <textarea name="alpha" id="alpha" cols="50" rows="10" disabled>{{alpha}}</textarea>
     <br><br>
     <!-- <input onclick="index()"type="button" value="Submit"> -->
@@ -37,7 +49,6 @@
             type: 'POST',
             data: data,
             success: function(res) {
-                //console.log(res);
                 $('#circular').val(res.circular);
                 $('#alpha').val(res.alpha);
             }
