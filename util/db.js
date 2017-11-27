@@ -15,17 +15,6 @@ exports.initialize = function(callback){
         if (entries === null) {
             entries = db.addCollection("entries");
         }
-        
-        // kick off any program logic or start listening to external events
-        //runProgramLogic();
-        /* console.log('Initializing complete')
-        console.log(entries.get(1)); // returns Sleipnir
-        console.log('----------');
-        console.log(entries.find( {'name':'Sleipnir'} ))
-        console.log('----------');
-        console.log(entries.find( { legs: { '$gt' : 2 } } ));
-        console.log('-----regex test-----');
-        console.log(entries.find({'name': { '$regex': 'r' }})) */
         callback();
     }    
 }
