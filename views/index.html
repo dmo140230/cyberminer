@@ -1,0 +1,134 @@
+<html>
+    <head>
+        <!-- Load jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Load CSS -->
+        <link href='https://fonts.googleapis.com/css?family=Gruppo' rel='stylesheet'>
+        <link href'https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css' rel='stylesheet'>
+        <link rel="stylesheet" href="css/core.css"/>
+        <link rel="stylesheet" href="css/jquery.dataTables.min.css"/>
+        <!-- Load js libraries -->
+        <script src="js/jquery.dataTables.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>        
+    </head>
+<body>
+    <img src="cybercrawlers.png" />
+    <h1>Cyberminer</h1>
+    <form class="form-wrapper">
+        <input type="text" id="search" placeholder="Search for..." required>
+        <input type="submit" value="go" id="submit">
+    </form>
+
+    <table id="search_results" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>URL</th>
+                    <th>Descriptor</th>
+                </tr>
+            </thead>
+        </table>
+
+    <script>
+        $(document).ready(function() {
+            
+            var dataTable = $('#search_results').DataTable( {
+                "pagingType": "full_numbers",
+                'searching': true,
+                'ordering': false,
+                "processing": true,
+                "serverSide": true,
+                "bFilter": false,
+                "ajax": {
+                    url: "/search",
+                    type: "post",
+                    error: function () {
+                    }
+                },
+                "columns": [
+                    { "data": "url" },
+                    { "data": "descriptor" }
+                ]
+            } );
+            $('#search_results_filter').remove();
+            //search route
+            var searchFunction = function () {
+                var search = $('#search').val();
+                console.log(search);
+                dataTable.search(search).draw();
+            }
+
+            //autocomplete on type
+            /* $('#search').on( "keypress", function(e) {
+                clearTimeout($.data(this, 'timer'));
+                if (e.keyCode == 13)
+                    //auto();
+                    console.log('Autocomplete here')
+                else
+                $(this).data('timer', setTimeout(auto, 500));
+            }); */
+
+            //return search values on search enter
+            $('#submit').on( "click", function(e) {
+                e.preventDefault();
+                //crawl();
+                searchFunction();
+            });
+
+            //auto complete route
+            function auto(){
+                var data = {};
+                data.lines = $('#search').val();
+                $.ajax({
+                    url: "/auto",
+                    type: 'POST',
+                    data: data,
+                    success: function(res) {
+                        console.log(res);
+                    }
+                });
+            }
+            //crawl route
+            function crawl(){
+                var data = {};
+                data.lines = $('#search').val();
+                $.ajax({
+                    url: "/crawl",
+                    type: 'POST',
+                    data: data,
+                    success: function(res) {
+                        console.log(res);
+                    }
+                });
+            }
+            $( "#search" ).autocomplete({
+                source: function( request, response ) {
+                    $.ajax({
+                    url: "/auto",
+                    type: 'POST',
+                    data: {
+                        q: request.term
+                    },
+                    success: function( data ) {
+                        console.log("SUCCESS");
+                        response( data );
+                    }
+                    });
+                },
+                select: function( event, ui ) {
+                    $('#search').val(this.value);
+                },
+                open: function() {
+                    $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+                },
+                close: function() {
+                    $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+                },
+                messages: {
+                    noResults: '',
+                    results: function() {}
+                }
+            });
+        } );
+    </script>
+</body>
+</html>

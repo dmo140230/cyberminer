@@ -1,19 +1,18 @@
 {
-  "name": "kwic_system",
-  "version": "1.0.0",
-  "description": "",
-  "main": "kwic.js",
+  "name": "cyberminer-javascript",
+  "version": "0.0.0",
+  "description": "Cyberminer web crawler made with JavaScript",
+  "main": "app.js",
+  "author": "David",
+  "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.18.1",
     "async": "^2.5.0",
+    "body-parser": "^1.18.1",
+    "cheerio": "^0.19.0",
     "express": "^4.15.4",
-    "mustachex": "^0.0.3"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+    "lokijs": "^1.5.1",
+    "mustachex": "^0.0.3",
+    "request": "^2.65.0",
+    "url-parse": "^1.0.5"
+  }
 }

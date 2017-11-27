@@ -3,9 +3,10 @@ var async = require('async');
 var Alpha = require('./alpha')
 
 function Circular(lines) {
-    this.split_lines = lines.split("\n");
+    this.split_lines = lines.split(".");
     this.circ_lines = [];
     this.alpha_lines = [];
+    
 }
 
 Circular.prototype.ciruclarShift = function(call){
@@ -23,7 +24,7 @@ Circular.prototype.ciruclarShift = function(call){
                 shifts.push(words.join(' '))
                 var current = words.shift();
             }while(current != first);
-            result = result.concat(shifts);
+            result = result.concat(shifts + '\r\n');
             each_callback();
         } catch (error) {
             console.log(error);
