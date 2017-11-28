@@ -31,15 +31,27 @@ app.get('/', function(req, res) {
     res.render('index');
 });
 
+app.get('/crawler', function(req, res) {
+    res.render('crawler');
+});
+
 app.post('/crawl', function(req, res) {
     console.log(req.body);
-    crawler.crawl();
-    res.json(
-        {
-            data: 'Hello World',
-            input: req.body.lines
-        }
-    );
+    data = {};
+
+    data.crawl_word = req.body.crawl_word;
+    data.crawl_url = req.body.crawl_url;
+    data.crawl_limit = req.body.crawl_limit;
+    if(!data.crawl_word || !data.crawl_url){
+        res.json({word: 'Please fill out all the required fields'});
+    }
+    else{
+        crawler.start(data, function(result){
+            res.json(result);
+        });
+    }
+    
+    
 });
 
 app.post('/search', function(req, res){

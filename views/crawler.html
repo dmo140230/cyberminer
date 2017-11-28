@@ -1,0 +1,65 @@
+<html>
+    <head>
+        <!-- Load jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Load CSS -->
+        <link href='https://fonts.googleapis.com/css?family=Gruppo' rel='stylesheet'>
+        <link href'https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css' rel='stylesheet'>
+        <link rel="stylesheet" href="css/core.css"/>
+        <link rel="stylesheet" href="css/jquery.dataTables.min.css"/>
+        <!-- Load js libraries -->
+        <script src="js/jquery.dataTables.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>        
+    </head>
+<body>
+    <h1>Cyberminer Crawler</h1>
+    <form class="form-wrapper block">
+        <label for="crawl_word">Search term</label>
+        <input type="text" id="crawl_word" placeholder="Search for..." required>
+        <br />
+        <label for="crawl_url">URL starting point: </label>
+        <input type="text" id="crawl_url" placeholder="Enter a valid url..." required>
+        <br />
+        <label for="crawl_limit">Number of pages to crawl: </label>
+        <input type="number" id="crawl_limit" placeholder="..." >
+        <br />
+        <div style="font-size: 18px;">Crawler will index pages until search term is found, or until page limit is reached</div>
+        <input type="submit" value="go" id="submit">
+        <br>
+        <textarea id="result" disabled style="display: block;
+        margin-top: 20px;
+        width: 100%;
+        height: 75px;
+        resize: none;"></textarea>
+    </form>
+    <div class="crawler"><a href="/">Back</a></div>
+    <script>
+        $(document).ready(function() {
+            
+            //crawl button action
+            $('#submit').on( "click", function(e) {
+                e.preventDefault();
+                crawl();
+            });
+
+            //crawl route
+            function crawl(){
+                var data = {};
+                data.crawl_word = $('#crawl_word').val();
+                data.crawl_url = $('#crawl_url').val();
+                data.crawl_limit = $('#crawl_limit').val();
+                console.log(data);
+                $.ajax({
+                    url: "/crawl",
+                    type: 'POST',
+                    data: data,
+                    success: function(res) {
+                        console.log(res);
+                        $('#result').val(res.word + '\n' + res.num + '\n' + JSON.stringify(res.pages));
+                    }
+                });
+            }
+        } );
+    </script>
+</body>
+</html>

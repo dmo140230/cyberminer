@@ -39,7 +39,7 @@ exports.removeUrl = function(query){
 exports.insertUrlDesc = function(params){
     var entries = db.getCollection("entries");
     entries.insert(params);
-    console.log('done')
+    console.log('done inserting into db')
 }
 
 // example method with any bootstrap logic to run after database initialized

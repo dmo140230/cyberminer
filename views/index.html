@@ -12,13 +12,15 @@
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>        
     </head>
 <body>
+    
+    
     <img src="cybercrawlers.png" />
     <h1>Cyberminer</h1>
     <form class="form-wrapper">
         <input type="text" id="search" placeholder="Search for..." required>
         <input type="submit" value="go" id="submit">
     </form>
-
+    <div class="crawler"><a href="/crawler">Crawler</a></div>
     <table id="search_results" class="display" cellspacing="0" width="100%">
             <thead>
                 <tr>
@@ -60,8 +62,8 @@
             //return search values on search enter
             $('#submit').on( "click", function(e) {
                 e.preventDefault();
-                crawl();
-                //searchFunction();
+                //crawl();
+                searchFunction();
             });
 
             //auto complete route
