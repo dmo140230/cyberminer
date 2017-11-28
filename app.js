@@ -7,7 +7,7 @@ var app = express();
 //use a json body parser
 var bodyParser = require('body-parser');
 //include the crawler api
-var crawler = require('./routes/crawler')
+var crawler = require('./util/crawler')
 //include the result formatter
 var format = require('./util/format')
 //initialize the database

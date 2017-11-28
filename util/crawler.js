@@ -5,8 +5,8 @@ var async = require('async');
 var kwic = require('../kwic/kwic');
 
 var START_URL = "http://www.arstechnica.com";
-var SEARCH_WORD = "Aston Martin";
-var MAX_PAGES_TO_VISIT = 1;
+var SEARCH_WORD = "Ultra Sun";
+var MAX_PAGES_TO_VISIT = 10;
 
 var pagesVisited = {};
 var numPagesVisited = 0;
@@ -21,7 +21,7 @@ pagesToVisit.push(START_URL);
 var crawl = function() {
     if (numPagesVisited >= MAX_PAGES_TO_VISIT) {
         console.log("Reached max limit of number of pages to visit.");
-        db.find('r');        
+        //db.find('r');        
         return;
     }
     var nextPage = pagesToVisit.pop();
@@ -44,12 +44,19 @@ function visitPage(url, callback) {
     request(url, function (error, response, body) {
         // Check status code (200 is HTTP OK)
         console.log("Status code: " + response.statusCode);
+        //If the url returns a status code that isn't a success
         if (response.statusCode !== 200) {
+            //remove this url if it's in the database
+            db.removeUrl(url);
             callback();
             return;
         }
         // Parse the document body
         var $ = cheerio.load(body);
+        //remove head
+        $('head').remove();
+        //remove the meta tag
+        $('meta').remove();
         //remove footers
         $('footer').remove();
         //remove inline javascript
@@ -59,6 +66,7 @@ function visitPage(url, callback) {
         var isWordFound = searchForWord($, SEARCH_WORD, url);
         if (isWordFound) {
             console.log('Word ' + SEARCH_WORD + ' found at page ' + url);
+            callback()
         } else {
             collectInternalLinks($, function () {
                 // In this short program, our callback is just calling crawl()
@@ -75,8 +83,10 @@ function searchForWord($, word, url) {
         try {
             console.log(result.alpha);
             db.insertUrlDesc({url:url, descriptor: result.alpha});
+            return(bodyText.indexOf(word) !== -1);
         } catch (error) {
             console.log(error);
+            return(bodyText.indexOf(word) !== -1);
         }
     })
 }

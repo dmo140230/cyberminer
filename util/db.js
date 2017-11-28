@@ -18,10 +18,22 @@ exports.initialize = function(callback){
         callback();
     }    
 }
+
 exports.find = function(query){
     var entries = db.getCollection("entries");
     var result = entries.find({'descriptor': { '$regex': query }});
     return result;
+}
+
+exports.removeUrl = function(query){
+    //remove any matching entries from the result set and the main collection
+    //use $eq strict equality because regex wipes out all with the same domain
+    console.log('removing: ' + query);
+    var entries = db.getCollection("entries");
+    var result = entries.chain().find({'url': { '$eq': query }}).remove();
+    console.log('removed: ' + query);
+    return result;
+    
 }
 
 exports.insertUrlDesc = function(params){
@@ -29,7 +41,6 @@ exports.insertUrlDesc = function(params){
     entries.insert(params);
     console.log('done')
 }
-
 
 // example method with any bootstrap logic to run after database initialized
 function runProgramLogic() {
