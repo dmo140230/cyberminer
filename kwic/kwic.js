@@ -19,9 +19,6 @@ exports.kwicIndex = function(lines, callback) {
             //console.log(result.circular_lines);
             //console.log(result.alpha_lines)
             console.log("FINISHED KWIC");
-            //fs.appendFileSync('./message.txt', result.alpha_lines + '\r\n');
-            //here is where the database insertion takes place.
-            //callback after adding to db
             callback(
                 {
                     input: lines,
