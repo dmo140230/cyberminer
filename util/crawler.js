@@ -4,26 +4,63 @@ var URL = require('url-parse');
 var async = require('async');
 var kwic = require('../kwic/kwic');
 var config = require('../config/crawler.settings').crawler;
+var customers = require('../config/crawler.settings').customers;
 
-var START_URL = "http://www.arstechnica.com";
-var SEARCH_WORD = "raxacoricofallapatorius";
-var MAX_PAGES_TO_VISIT = 10;
+var START_URL;
+var SEARCH_WORD;
+var MAX_PAGES_TO_VISIT;
 var FOUND  = false;
 
 var pagesVisited = {};
 var numPagesVisited = 0;
 var pagesToVisit = [];
-var url = new URL(START_URL);
-var baseUrl = url.protocol + "//" + url.hostname;
+var url;
+var baseUrl;
 var db = require('../util/db')
 var returning;
 
-pagesToVisit.push(START_URL);
+
 //crawl();
 
-var crawl = function(callback_one) {
+function start(data, callback) {
+    console.log(data);
+    SEARCH_WORD  = data.crawl_word;
+    START_URL = data.crawl_url;
+    MAX_PAGES_TO_VISIT = (data.crawl_limit) ? data.crawl_limit: config.crawler.max_pages;
+
+    //initialize the urls
+    pagesToVisit.push(START_URL);
+    url = new URL(START_URL);
+    baseUrl = url.protocol + "//" + url.hostname;
+    pagesVisited = {};
+    numPagesVisited = 0;
+    console.log(SEARCH_WORD);
+    console.log(START_URL);
+    crawl(function(results){
+        if(results){
+            var t = {
+                word: 'Found the keyword: ' + SEARCH_WORD,
+                num: 'Visited : ' + numPagesVisited + ' pages',
+                pages: pagesVisited,
+            }
+            callback(t);
+        }
+        else{
+            var t = {
+                word: 'Did not find the keyword: ' + SEARCH_WORD,
+                num: 'Visited : ' + numPagesVisited + ' pages',
+                pages: pagesVisited,
+            }
+            callback(t);
+        }
+    });
+
+}
+exports.start = start;
+
+function crawl(callback_one) {
     console.log(numPagesVisited);
-    if (numPagesVisited >= MAX_PAGES_TO_VISIT || FOUND) {
+    if (numPagesVisited >= MAX_PAGES_TO_VISIT || FOUND || pagesToVisit.length == 0) {
         console.log("Reached max limit of number of pages to visit.");
         console.log('Word found? ' + FOUND);
         if(FOUND){
@@ -50,8 +87,6 @@ var crawl = function(callback_one) {
 
 function visitPage(url, callback) {
     // Add page to our set
-    
-
     // Make the request
     console.log("Visiting page " + url);
     request(url, function (error, response, body) {
@@ -101,7 +136,8 @@ function searchForWord($, word, url, callback) {
     kwic.kwicIndex(bodyText, function(result){
         try {
             //console.log(result.alpha);
-            db.insertUrlDesc({url:url, descriptor: result.alpha});
+            var rank = (customers[url]) ? customers[url]: 0;
+            db.insertUrlDesc({url:url, descriptor: result.alpha, paid: rank});
             callback(bodyText.toLowerCase().indexOf(word.toLowerCase()) !== -1);
         } catch (error) {
             console.log(error);
@@ -126,32 +162,3 @@ function collectInternalLinks($, callback) {
         }
     }); 
 }
-
-var start = function(params, callback) {
-    console.log(config);
-    SEARCH_WORD  = (data.crawl_word) ? data.crawl_word: config.crawler.search_word;
-    START_URL = (data.crawl_url) ? data.crawl_url: config.crawler.start_url;
-    MAX_PAGES_TO_VISIT = (data.crawl_limit) ? data.crawl_limit: config.crawler.max_pages;
-
-    console.log(SEARCH_WORD);
-    crawl(function(results){
-        if(results){
-            var t = {
-                word: 'Found the keyword: ' + SEARCH_WORD,
-                num: 'Visited : ' + numPagesVisited + ' pages',
-                pages: pagesVisited,
-            }
-            callback(t);
-        }
-        else{
-            var t = {
-                word: 'Did not find the keyword: ' + SEARCH_WORD,
-                num: 'Visited : ' + numPagesVisited + ' pages',
-                pages: pagesVisited,
-            }
-            callback(t);
-        }
-    });
-
-}
-exports.start = start;
