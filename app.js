@@ -55,20 +55,38 @@ app.post('/crawl', function(req, res) {
 });
 
 app.post('/search', function(req, res){
-    var input = req.body.search.value;
+    var start = req.body.start;
+    var end = start + req.body.length;
+
+    var f = req.body.search.value.split('<-!@!->')
+    var input = f[0];
+    var operator = f[1];
     if( input ) {
-        var result = db.find(input);
+        if(operator){
+            if(operator === 'OR'){
+                var result = db.orFind(input);     
+            }
+            else if(operator === 'AND'){
+                var result = db.andFind(input);                    
+            }
+            else if(operator === 'NOT'){
+                var result = db.notFind(input);                    
+            }
+        }
+        else{
+            var result = db.find(input);            
+        }
     }
     else{
         var result = [];
     }
-    var formattedResults = format.formatDbResults(result, input, function(final){
+    var formattedResults = format.formatDbResults(result, input, operator, function(final){
         res.json(
             {
                 draw: req.body.draw,
                 recordsTotal: final.length,
                 recordsFiltered: final.length,
-                data: final
+                data: final.slice(start, end)
             }
         );
     });

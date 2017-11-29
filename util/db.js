@@ -25,6 +25,30 @@ exports.find = function(query){
     return result;
 }
 
+exports.orFind = function(query){
+    var re = generateOrRegex(query);
+    var entries = db.getCollection("entries");
+    var result = entries.find({'descriptor': { '$regex': re }});
+    return result;
+}
+
+exports.andFind = function(query){
+    var and = generateAndList(query);
+    var entries = db.getCollection("entries");    
+    var result = entries.find({'$and': and});
+    return result;
+}
+
+exports.notFind = function(query){
+    //var values = query.split(' ');
+    var re = generateOrRegex(query);
+    var entries = db.getCollection("entries");    
+    var result = entries.where(function(obj) {
+        return obj.descriptor.indexOf(query) == -1;
+    });
+    return result;
+}
+
 exports.removeUrl = function(query){
     //remove any matching entries from the result set and the main collection
     //use $eq strict equality because regex wipes out all with the same domain
@@ -48,4 +72,17 @@ function runProgramLogic() {
     console.log("number of entries in database : " + entryCount);
 }
 
+function generateAndList(query){
+    var and = [];
+    var pieces = query.split(' ');
+    for (var i = 0; i < pieces.length; i++) {
+        and.push({'descriptor': { '$regex': pieces[i] }})
+    }
+    return and;
+}
 
+function generateOrRegex(query){
+    var pattern = query.replace(' ', '|');
+    var re = new RegExp(pattern)
+    return re;
+}

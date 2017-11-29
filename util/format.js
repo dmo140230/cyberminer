@@ -1,6 +1,6 @@
 'use strict'
 
-exports.formatDbResults = function(resultList, input, callback){
+exports.formatDbResults = function(resultList, input, op, callback){
     var finalResults = [];
     var pagesVisited = {};
     var counter = 0;
@@ -10,12 +10,24 @@ exports.formatDbResults = function(resultList, input, callback){
             counter = counter + 1;
             if(!pagesVisited[url]){
                 pagesVisited[url] = true;
-                var finalDescriptor = getCorrectString(element, input);
+                if(op == 'AND' || op =='OR'){
+                    var pieces = input.split(' ');
+                    var finalDescriptor = getCorrectString(element, pieces[0]);
+                }
+                else{
+                    var finalDescriptor = getCorrectString(element, input);
+                }
                 if(finalDescriptor){
                     var a_tag = makeHyperlink(url);
                     var f = {url: a_tag, descriptor: finalDescriptor};
                     finalResults = finalResults.concat(f);
                 }
+                else if(op == 'NOT'){
+                    var a_tag = makeHyperlink(url);
+                    var f = {url: a_tag, descriptor: "Keyword(s) '" + input + "' not found in this document"};
+                    finalResults = finalResults.concat(f);
+                }
+                
             }
             if (counter == resultList.length) {
                 // No tasks left, good to go
@@ -45,7 +57,6 @@ exports.formatAutoResults = function(resultList, input, callback){
             }
             if (counter == resultList.length) {
                 // No tasks left, good to go
-                console.log(finalResults);
                 finalResults = unique(finalResults);
                 callback(finalResults);
             }

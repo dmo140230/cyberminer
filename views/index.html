@@ -18,6 +18,13 @@
     <h1>Cyberminer</h1>
     <form class="form-wrapper">
         <input type="text" id="search" placeholder="Search for..." required>
+        <label style="display: inline;font-size: 20;">Search Mode: </label>
+        <select id="operator">
+            <option value="">Exact Match</option>
+            <option value="OR">OR</option>
+            <option value="AND">AND</option>
+            <option value="NOT">NOT</option>
+        </select>
         <input type="submit" value="go" id="submit">
     </form>
     <div class="crawler"><a href="/crawler">Crawler</a></div>
@@ -35,6 +42,8 @@
             
             var dataTable = $('#search_results').DataTable( {
                 "pagingType": "full_numbers",
+                "paging": true,
+                "lengthMenu": [10, 25, 50, 75, 100],
                 'searching': true,
                 'ordering': false,
                 "processing": true,
@@ -55,8 +64,10 @@
             //search route
             var searchFunction = function () {
                 var search = $('#search').val();
-                console.log(search);
-                dataTable.search(search).draw();
+                var op = $('#operator').val();
+                var r = search + '<-!@!->' + op;
+                console.log(r);
+                dataTable.search(r).draw();
             }
             
             //return search values on search enter
