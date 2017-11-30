@@ -10,6 +10,8 @@ var bodyParser = require('body-parser');
 var crawler = require('./util/crawler')
 //include the result formatter
 var format = require('./util/format')
+//include the autocorrect module
+var spellcheck = require('./util/spellcheck')
 //initialize the database
 var db = require('./util/db')
 //initialize the database, and then start the server once it's done
@@ -50,8 +52,24 @@ app.post('/crawl', function(req, res) {
             res.json(result);
         });
     }
-    
-    
+});
+
+app.post('/correct', function(req, res) {
+    console.log(req.body);
+    var word = req.body.word;
+    if(word){
+        var fixed = spellcheck.getCorrection(word);
+        var returnString;
+        if (fixed === word) {
+            fixed = "";
+        } else if (typeof fixed === "undefined") {
+            fixed = "";
+        }
+        res.send(fixed);
+    }
+    else{
+        res.send('');
+    }
 });
 
 app.post('/search', function(req, res){

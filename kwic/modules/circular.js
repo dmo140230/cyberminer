@@ -1,12 +1,18 @@
 'use strict'
 var async = require('async');
 var Alpha = require('./alpha')
+var noise_words = require('../../config/settings').noise_words;
 
 function Circular(lines) {
     this.split_lines = lines.split(".");
     this.circ_lines = [];
     this.alpha_lines = [];
     
+}
+
+function keyword(s) {
+    var re = new RegExp('\\b(' + noise_words.join('|') + ')\\b', 'gi');
+    return (s || '').replace(re, '').replace(/[ ]{2,}/, ' ');
 }
 
 Circular.prototype.ciruclarShift = function(call){
@@ -21,7 +27,8 @@ Circular.prototype.ciruclarShift = function(call){
             var current = words.shift();
             do{
                 words.push(current);
-                shifts.push(words.join(' '))
+                //filter the noise words and then add the filtered line to the collection of shifted lines
+                shifts.push(keyword(words.join(' ')))
                 var current = words.shift();
             }while(current != first);
             result = result.concat(shifts + '\r\n');

@@ -168,3 +168,33 @@ textarea {
   select {
     margin: 10px;
   }
+
+#submit[disabled], #submit:hover[disabled], #submit:focus[disabled], #submit:active[disabled] {
+    background-image: -webkit-linear-gradient(top, #b8b8b8, #999b97);
+    background-color: #999b97;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#b8b8b8), to(#999b97));
+    background-image: -webkit-linear-gradient(top, #b8b8b8, #999b97);
+    background-image: -moz-linear-gradient(top, #b8b8b8, #999b97);
+    background-image: -ms-linear-gradient(top, #b8b8b8, #999b97);
+    background-image: -o-linear-gradient(top, #b8b8b8, #999b97);
+    background-image: linear-gradient(top, #b8b8b8, #999b97);
+    cursor: not-allowed;
+}  
+
+.working {
+    text-align: left;
+    padding-top: 30px;
+    display: inline;
+    font-size: 24;
+    color: blue;
+}
+
+.autocorrect {
+    color: red;
+    padding-bottom: 20px;
+}
+
+.correction {
+    color: blue;
+    padding-bottom: 20px;
+}

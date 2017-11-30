@@ -21,9 +21,10 @@
         <input type="text" id="crawl_url" placeholder="Enter a valid url..." required>
         <br />
         <label for="crawl_limit">Number of pages to crawl: </label>
-        <input type="number" id="crawl_limit" placeholder="..." >
+        <input type="number" min="1" id="crawl_limit" placeholder="..." >
         <br />
         <div style="font-size: 18px;">Crawler will index pages until search term is found, or until page limit is reached</div>
+        <div class="working"></div>
         <input type="submit" value="go" id="submit">
         <br>
         <textarea id="result" disabled style="display: block;
@@ -39,13 +40,20 @@
             //crawl button action
             $('#submit').on( "click", function(e) {
                 e.preventDefault();
-                crawl();
+                if(!$('#submit').prop('disabled')){
+                    $('#submit').prop('disabled', true);
+                    $('.working').text('Please wait. Now crawling...');
+                    crawl();
+                }
             });
 
             //crawl route
             function crawl(){
                 var data = {};
                 data.crawl_word = $('#crawl_word').val();
+                if(!data.crawl_word){
+                    data.crawl_word = 'raxacoricofallapatorius';
+                }
                 data.crawl_url = $('#crawl_url').val();
                 data.crawl_limit = $('#crawl_limit').val();
                 console.log(data);
@@ -56,6 +64,8 @@
                     success: function(res) {
                         console.log(res);
                         $('#result').val(res.word + '\n' + res.num + '\n' + JSON.stringify(res.pages));
+                        $('.working').text('');
+                        $('#submit').prop('disabled', false);
                     }
                 });
             }

@@ -1,3 +1,4 @@
+var sort_method = require('../config/settings').sort_method;
 'use strict'
 
 exports.formatDbResults = function(resultList, input, op, callback){
@@ -5,8 +6,19 @@ exports.formatDbResults = function(resultList, input, op, callback){
     var pagesVisited = {};
     var counter = 0;
     if(resultList.length > 0){
+        //Sort the list according to the config value
+        if(sort_method){
+            if(sort_method == 'paid'){
+                console.log('paid')
+                resultList.sort(function(a, b) {
+                    console.log(a.paid - b.paid);
+                    return b.paid - a.paid;
+                });
+            }
+        }
         resultList.forEach(function(element) {
             var url = element.url
+            console.log(url);
             counter = counter + 1;
             if(!pagesVisited[url]){
                 pagesVisited[url] = true;

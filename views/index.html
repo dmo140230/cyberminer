@@ -16,6 +16,7 @@
     
     <img src="cybercrawlers.png" />
     <h1>Cyberminer</h1>
+    <div class="crawler"><a href="/crawler">Crawler</a></div>
     <form class="form-wrapper">
         <input type="text" id="search" placeholder="Search for..." required>
         <label style="display: inline;font-size: 20;">Search Mode: </label>
@@ -27,7 +28,12 @@
         </select>
         <input type="submit" value="go" id="submit">
     </form>
-    <div class="crawler"><a href="/crawler">Crawler</a></div>
+    <div>
+        <span class="autocorrect" style="display:none;">Did you mean: </span>
+        <a href="#" class="correction" style="display:none;"></a>
+    </div>
+    
+    
     <table id="search_results" class="display" cellspacing="0" width="100%">
             <thead>
                 <tr>
@@ -103,6 +109,44 @@
                     }
                 });
             }
+
+            //auto correct route
+            $('#search').on( "keyup", function(e) {
+                $('.autocorrect, .correction').css('display', 'none');
+                $('.correction').html('');
+                clearTimeout($.data(this, 'timer'));
+                if (e.keyCode == 13){
+                    correct();
+                }
+                else{
+                    $(this).data('timer', setTimeout(correct, 500));
+                }
+            });
+            function correct(){
+                var data = {};
+                data.word = $('#search').val();
+                $.ajax({
+                    url: "/correct",
+                    type: 'POST',
+                    data: data,
+                    success: function(res) {
+                        if(res){
+                            console.log(res);
+                            $('.correction').html(res);
+                            $('.autocorrect, .correction').css('display', 'block');
+                        }
+                    }
+                });
+            }
+            $('.correction').on( "click", function(e) {
+                e.preventDefault();
+                //crawl();
+                searchFunction();
+                $('.autocorrect, .correction').css('display', 'none');
+                $('#search').val($('.correction').html());
+                $('.correction').html('');
+            });
+            
             $( "#search" ).autocomplete({
                 source: function( request, response ) {
                     $.ajax({

@@ -3,8 +3,8 @@ var cheerio = require('cheerio');
 var URL = require('url-parse');
 var async = require('async');
 var kwic = require('../kwic/kwic');
-var config = require('../config/crawler.settings').crawler;
-var customers = require('../config/crawler.settings').customers;
+var config = require('../config/settings').crawler;
+var customers = require('../config/settings').customers;
 
 var START_URL;
 var SEARCH_WORD;
